@@ -6,7 +6,7 @@ import os
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///clientes.sqlite3"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.secret_key = 'sua_chave_secreta_aqui'  # ⚠️ Em produção, use variável de ambiente
+app.secret_key = 'sua_chave_secreta_aqui'
 db = SQLAlchemy(app)
 
 class info(db.Model):
@@ -188,41 +188,6 @@ def excluir(id):
         flash(f'Erro ao excluir cliente: {str(e)}', 'error')
     
     return redirect(url_for('visualizar'))
-
-@app.route("/detalhes/<int:id>")
-def detalhes(id):
-    """Rota para mostrar detalhes completos do cliente (pode ser usado para modal)"""
-    cliente = info.query.get_or_404(id)
-    return render_template("detalhes.html", cliente=cliente)
-
-# ========== ROTAS DE API ==========
-
-@app.route("/api/cliente/<int:id>")
-def api_cliente(id):
-    """API para obter dados do cliente em JSON"""
-    cliente = info.query.get_or_404(id)
-    return {
-        'id': cliente.id,
-        'nome': cliente.nome,
-        'cpf': cliente.cpf,
-        'data_nasc': cliente.data_nasc.strftime('%d/%m/%Y') if cliente.data_nasc else None,
-        'genero': cliente.genero,
-        'estado_civil': cliente.estado_civil,
-        'nacionalidade': cliente.nacionalidade,
-        'ocupacao': cliente.ocupacao,
-        'telefone_principal': cliente.telefone_principal,
-        'telefone_secundario': cliente.telefone_secundario,
-        'email_principal': cliente.email_principal,
-        'email_secundario': cliente.email_secundario,
-        'cep': cliente.cep,
-        'logradouro': cliente.logradouro,
-        'numero_casa': cliente.numero_casa,
-        'complemento': cliente.complemento,
-        'bairro': cliente.bairro,
-        'cidade': cliente.cidade,
-        'estado': cliente.estado,
-        'pais': cliente.pais
-    }
 
 # ========== FILTROS PERSONALIZADOS ==========
 
