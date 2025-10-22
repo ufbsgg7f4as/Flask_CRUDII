@@ -77,30 +77,30 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-    admin = info.query.filter_by(cpf='00000000000').first()
-    if not admin:
-        admin = info(
-            nome="Administrador",
-            cpf="00000000000",
-            data_nasc=datetime.strptime("01-01-2000", "%d-%m-%Y").date(),
-            genero="Nenhum",
-            estado_civil="Nenhum",
-            nacionalidade="Nenhuma",
-            ocupacao="Administrador",
-            telefone_principal="(00) 00000-0000",
-            telefone_secundario=None,
-            email_principal="Nenhum",
-            email_secundario=None,
-            cep="00000-000",
-            logradouro="Nenhum",
-            numero_casa="0",
-            complemento=None,
-            bairro="Nenhum",
-            cidade="Nenhum",
-            estado="Nenhum",
-            pais="Nenhum"
-        )
-        db.session.add(admin)
-        db.session.commit()
+        admin = info.query.filter_by(cpf='00000000000').first()
+        if not admin:
+            admin = info(
+                nome="Administrador",
+                cpf="00000000000",
+                data_nasc=datetime.strptime("01-01-2000", "%d-%m-%Y").date(),
+                genero="Nenhum",
+                estado_civil="Nenhum",
+                nacionalidade="Nenhuma",
+                ocupacao="Administrador",
+                telefone_principal="(00) 00000-0000",
+                telefone_secundario=None,
+                email_principal="Nenhum",
+                email_secundario=None,
+                cep="00000-000",
+                logradouro="Nenhum",
+                numero_casa="0",
+                complemento=None,
+                bairro="Nenhum",
+                cidade="Nenhum",
+                estado="Nenhum",
+                pais="Nenhum"
+            )
+            db.session.add(admin)
+            db.session.commit()
 
     app.run(debug=True)
