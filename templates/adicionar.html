@@ -1,0 +1,439 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4 page-header">
+                <h1><i class="bi bi-person-plus"></i> Cadastrar Novo Cliente</h1>
+                <a href="{{ url_for('visualizar') }}" class="btn btn-secondary-custom btn-custom hover-lift">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+
+            <link rel="stylesheet" href="../static/style.css">
+
+            <!-- Alertas -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-custom fade show" role="alert">
+                            <i class="bi bi-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }}"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="card card-custom glass-effect">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('adicionar') }}" class="needs-validation" novalidate>
+                        
+                        <!-- Seção: Dados Pessoais -->
+                        <div class="section-header mb-4">
+                            <h4 class="text-primary-custom">
+                                <i class="bi bi-person-vcard"></i> Dados Pessoais
+                            </h4>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="nome" class="form-label text-dark-strong">Nome Completo *</label>
+                                <input type="text" class="form-control form-control-custom" id="nome" name="nome" 
+                                       required maxlength="100" placeholder="Digite o nome completo">
+                                <div class="invalid-feedback">
+                                    Por favor, informe o nome completo.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="cpf" class="form-label text-dark-strong">CPF *</label>
+                                <input type="text" class="form-control form-control-custom" id="cpf" name="cpf" 
+                                       required maxlength="11" placeholder="000.000.000-00" 
+                                       pattern="\d{11}" title="Digite apenas números (11 dígitos)">
+                                <div class="invalid-feedback">
+                                    Informe um CPF válido (11 dígitos).
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="data_nasc" class="form-label text-dark-strong">Data de Nascimento *</label>
+                                <input type="date" class="form-control form-control-custom" id="data_nasc" name="data_nasc" required>
+                                <div class="invalid-feedback">
+                                    Selecione a data de nascimento.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="genero" class="form-label text-dark-strong">Gênero</label>
+                                <select class="form-select form-control-custom" id="genero" name="genero">
+                                    <option value="">Selecione...</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Feminino">Feminino</option>
+                                    <option value="Outro">Outro</option>
+                                    <option value="Prefiro não informar">Prefiro não informar</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="estado_civil" class="form-label text-dark-strong">Estado Civil</label>
+                                <select class="form-select form-control-custom" id="estado_civil" name="estado_civil">
+                                    <option value="">Selecione...</option>
+                                    <option value="Solteiro(a)">Solteiro(a)</option>
+                                    <option value="Casado(a)">Casado(a)</option>
+                                    <option value="Divorciado(a)">Divorciado(a)</option>
+                                    <option value="Viúvo(a)">Viúvo(a)</option>
+                                    <option value="União Estável">União Estável</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nacionalidade" class="form-label text-dark-strong">Nacionalidade</label>
+                                <input type="text" class="form-control form-control-custom" id="nacionalidade" 
+                                       name="nacionalidade" maxlength="50" placeholder="Ex: Brasileira">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="ocupacao" class="form-label text-dark-strong">Ocupação/Profissão *</label>
+                                <input type="text" class="form-control form-control-custom" id="ocupacao" name="ocupacao" 
+                                       required maxlength="50" placeholder="Ex: Engenheiro, Médico, Estudante...">
+                                <div class="invalid-feedback">
+                                    Informe a ocupação/profissão.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seção: Contato -->
+                        <div class="section-header mb-4 mt-4">
+                            <h4 class="text-primary-custom">
+                                <i class="bi bi-telephone"></i> Contato
+                            </h4>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="telefone_principal" class="form-label text-dark-strong">Telefone Principal *</label>
+                                <input type="tel" class="form-control form-control-custom" id="telefone_principal" 
+                                       name="telefone_principal" required maxlength="20" 
+                                       placeholder="(00) 00000-0000">
+                                <div class="invalid-feedback">
+                                    Informe um telefone principal.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="telefone_secundario" class="form-label text-dark-strong">Telefone Secundário</label>
+                                <input type="tel" class="form-control form-control-custom" id="telefone_secundario" 
+                                       name="telefone_secundario" maxlength="20" placeholder="(00) 00000-0000">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email_principal" class="form-label text-dark-strong">Email Principal *</label>
+                                <input type="email" class="form-control form-control-custom" id="email_principal" 
+                                       name="email_principal" required maxlength="100" 
+                                       placeholder="exemplo@email.com">
+                                <div class="invalid-feedback">
+                                    Informe um email válido.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email_secundario" class="form-label text-dark-strong">Email Secundário</label>
+                                <input type="email" class="form-control form-control-custom" id="email_secundario" 
+                                       name="email_secundario" maxlength="100" placeholder="exemplo@email.com">
+                            </div>
+                        </div>
+
+                        <!-- Seção: Endereço -->
+                        <div class="section-header mb-4 mt-4">
+                            <h4 class="text-primary-custom">
+                                <i class="bi bi-geo-alt"></i> Endereço
+                            </h4>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="cep" class="form-label text-dark-strong">CEP *</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control-custom" id="cep" name="cep" 
+                                           required maxlength="9" placeholder="00000-000">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="buscarCEP()" 
+                                            title="Buscar endereço pelo CEP">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Informe o CEP.
+                                </div>
+                                <small class="form-text text-muted">Digite o CEP e clique na lupa para buscar automaticamente</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="logradouro" class="form-label text-dark-strong">Logradouro *</label>
+                                <input type="text" class="form-control form-control-custom" id="logradouro" name="logradouro" 
+                                       required maxlength="100" placeholder="Rua, Avenida, etc...">
+                                <div class="invalid-feedback">
+                                    Informe o logradouro.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="numero_casa" class="form-label text-dark-strong">Número *</label>
+                                <input type="text" class="form-control form-control-custom" id="numero_casa" name="numero_casa" 
+                                       required maxlength="10" placeholder="Nº">
+                                <div class="invalid-feedback">
+                                    Informe o número.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="complemento" class="form-label text-dark-strong">Complemento</label>
+                                <input type="text" class="form-control form-control-custom" id="complemento" 
+                                       name="complemento" maxlength="50" placeholder="Apartamento, Bloco, etc...">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="bairro" class="form-label text-dark-strong">Bairro *</label>
+                                <input type="text" class="form-control form-control-custom" id="bairro" name="bairro" 
+                                       required maxlength="50" placeholder="Nome do bairro">
+                                <div class="invalid-feedback">
+                                    Informe o bairro.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cidade" class="form-label text-dark-strong">Cidade *</label>
+                                <input type="text" class="form-control form-control-custom" id="cidade" name="cidade" 
+                                       required maxlength="50" placeholder="Nome da cidade">
+                                <div class="invalid-feedback">
+                                    Informe a cidade.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="estado" class="form-label text-dark-strong">Estado *</label>
+                                <select class="form-select form-control-custom" id="estado" name="estado" required>
+                                    <option value="">Selecione...</option>
+                                    {% for uf in ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'] %}
+                                    <option value="{{ uf }}">{{ uf }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Selecione o estado.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="pais" class="form-label text-dark-strong">País *</label>
+                                <input type="text" class="form-control form-control-custom" id="pais" name="pais" 
+                                       required maxlength="50" value="Brasil">
+                                <div class="invalid-feedback">
+                                    Informe o país.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-between mt-5 pt-3 border-top">
+                            <a href="{{ url_for('visualizar') }}" class="btn btn-secondary-custom btn-custom hover-lift">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success-custom btn-custom hover-lift">
+                                <i class="bi bi-check-circle"></i> Cadastrar Cliente
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-3 text-muted small">
+                <i class="bi bi-info-circle"></i> Campos marcados com * são obrigatórios.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+// Validação do formulário
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Máscaras para os campos
+document.addEventListener('DOMContentLoaded', function() {
+    // Máscara para CPF
+    var cpf = document.getElementById('cpf');
+    cpf.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
+    });
+
+    // Máscara para telefone
+    var telefones = document.querySelectorAll('input[type="tel"]');
+    telefones.forEach(function(tel) {
+        tel.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '')
+                .replace(/(\d{2})(\d)/, '($1) $2')
+                .replace(/(\d{5})(\d)/, '$1-$2')
+                .replace(/(-\d{4})\d+?$/, '$1');
+        });
+    });
+
+    // Máscara para CEP
+    var cep = document.getElementById('cep');
+    cep.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '')
+            .replace(/(\d{5})(\d)/, '$1-$2')
+            .replace(/(-\d{3})\d+?$/, '$1');
+    });
+});
+
+// Integração com API de CEP
+async function buscarCEP() {
+    const cepInput = document.getElementById('cep');
+    const cep = cepInput.value.replace(/\D/g, '');
+    const logradouro = document.getElementById('logradouro');
+    const bairro = document.getElementById('bairro');
+    const cidade = document.getElementById('cidade');
+    const estado = document.getElementById('estado');
+    
+    if (cep.length !== 8) {
+        alert('Por favor, digite um CEP válido com 8 dígitos.');
+        cepInput.focus();
+        return;
+    }
+    
+    // Mostrar loading
+    const btnBuscar = cepInput.nextElementSibling;
+    btnBuscar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+    btnBuscar.disabled = true;
+    
+    logradouro.value = 'Buscando...';
+    bairro.value = 'Buscando...';
+    cidade.value = 'Buscando...';
+    estado.value = 'Buscando...';
+    
+    try {
+        // Tentar ViaCEP primeiro
+        let data = await buscarViaCEP(cep);
+        
+        // Se ViaCEP falhar, tentar BrasilAPI
+        if (data.erro) {
+            data = await buscarBrasilAPI(cep);
+        }
+        
+        if (data && !data.erro) {
+            logradouro.value = data.logradouro || data.street || '';
+            bairro.value = data.bairro || data.neighborhood || '';
+            cidade.value = data.localidade || data.city || '';
+            estado.value = data.uf || data.state || '';
+            
+            // Focar no número da casa após preencher
+            document.getElementById('numero_casa').focus();
+            
+            // Mostrar sucesso
+            showAlert('Endereço encontrado e preenchido automaticamente!', 'success');
+        } else {
+            throw new Error('CEP não encontrado');
+        }
+        
+    } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
+        showAlert('CEP não encontrado. Por favor, verifique o CEP e tente novamente.', 'error');
+        limparCamposEndereco();
+    } finally {
+        // Restaurar botão
+        btnBuscar.innerHTML = '<i class="bi bi-search"></i>';
+        btnBuscar.disabled = false;
+    }
+}
+
+// Função para buscar na ViaCEP
+async function buscarViaCEP(cep) {
+    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    return await response.json();
+}
+
+// Função para buscar na BrasilAPI (backup)
+async function buscarBrasilAPI(cep) {
+    try {
+        const response = await fetch(`https://brasilapi.com.br/api/cep/v1/${cep}`);
+        if (response.ok) {
+            const data = await response.json();
+            return {
+                logradouro: data.street,
+                bairro: data.neighborhood,
+                localidade: data.city,
+                uf: data.state,
+                erro: false
+            };
+        }
+        return { erro: true };
+    } catch (error) {
+        return { erro: true };
+    }
+}
+
+function limparCamposEndereco() {
+    document.getElementById('logradouro').value = '';
+    document.getElementById('bairro').value = '';
+    document.getElementById('cidade').value = '';
+    document.getElementById('estado').value = '';
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.querySelector('.card-body').insertBefore(alertDiv, document.querySelector('.card-body').firstChild);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentElement) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+// Buscar CEP automaticamente quando perder o foco (opcional)
+document.getElementById('cep').addEventListener('blur', function() {
+    const cep = this.value.replace(/\D/g, '');
+    if (cep.length === 8) {
+        buscarCEP();
+    }
+});
+</script>
+
+<style>
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+</style>
+{% endblock %}

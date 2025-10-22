@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4 page-header">
+        <h1><i class="bi bi-people"></i> Lista de Clientes</h1>
+        <a href="{{ url_for('adicionar') }}" class="btn btn-primary-custom btn-custom hover-lift">
+            <i class="bi bi-person-plus"></i> Novo Cliente
+        </a>
+    </div>
+    <link rel="stylesheet" href="../static/style.css">
+
+    <!-- Filtros e Busca -->
+    <div class="card card-custom glass-effect mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control form-control-custom" 
+                               placeholder="Buscar por nome, CPF, email...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select id="filterCity" class="form-select form-control-custom">
+                        <option value="">Todas as cidades</option>
+                        {% for cidade in cidades %}
+                        <option value="{{ cidade }}">{{ cidade }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="filterState" class="form-select form-control-custom">
+                        <option value="">Todos os estados</option>
+                        {% for estado in estados %}
+                        <option value="{{ estado }}">{{ estado }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if clientes %}
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card card-custom glass-effect stat-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill display-4 text-primary-custom"></i>
+                    <h3 class="mt-2 text-dark-strong">{{ clientes|length }}</h3>
+                    <p class="text-muted mb-0">Total de Clientes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-custom glass-effect stat-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-geo-alt-fill display-4 text-success-custom"></i>
+                    <h3 class="mt-2 text-dark-strong">{{ cidades|length }}</h3>
+                    <p class="text-muted mb-0">Cidades Diferentes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-custom glass-effect stat-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-building-fill display-4 text-warning-custom"></i>
+                    <h3 class="mt-2 text-dark-strong">{{ estados|length }}</h3>
+                    <p class="text-muted mb-0">Estados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-custom glass-effect stat-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-briefcase-fill display-4 text-info-custom"></i>
+                    <h3 class="mt-2 text-dark-strong">{{ ocupacoes|length }}</h3>
+                    <p class="text-muted mb-0">Profissões</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Clientes -->
+    <div class="card card-custom glass-effect">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-custom" id="clientesTable">
+                    <thead>
+                        <tr>
+                            <th><i class="bi bi-hash"></i> ID</th>
+                            <th><i class="bi bi-person"></i> Nome</th>
+                            <th><i class="bi bi-person-badge"></i> CPF</th>
+                            <th><i class="bi bi-calendar"></i> Nascimento</th>
+                            <th><i class="bi bi-telephone"></i> Telefone</th>
+                            <th><i class="bi bi-envelope"></i> Email</th>
+                            <th><i class="bi bi-briefcase"></i> Ocupação</th>
+                            <th><i class="bi bi-geo-alt"></i> Cidade/UF</th>
+                            <th><i class="bi bi-gear"></i> Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cliente in clientes %}
+                        <tr class="hover-lift cliente-row">
+                            <td class="text-dark-custom">
+                                <span class="badge badge-custom badge-primary-custom">{{ cliente.id }}</span>
+                            </td>
+                            <td class="text-dark-strong">{{ cliente.nome }}</td>
+                            <td class="text-dark-custom cpf-mask">{{ cliente.cpf }}</td>
+                            <td class="text-dark-custom">
+                                {% if cliente.data_nasc %}
+                                    {{ cliente.data_nasc.strftime('%d/%m/%Y') }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td class="text-dark-custom">{{ cliente.telefone_principal }}</td>
+                            <td class="text-dark-custom">
+                                <small>{{ cliente.email_principal|truncate(20) }}</small>
+                            </td>
+                            <td class="text-dark-custom">
+                                <span class="badge badge-custom badge-info-custom">{{ cliente.ocupacao }}</span>
+                            </td>
+                            <td class="text-dark-custom">
+                                <small>{{ cliente.cidade }}/{{ cliente.estado }}</small>
+                            </td>
+                            <td>
+                                <div class="btn-group-custom" role="group">
+                                    <button type="button" class="btn btn-info-custom btn-custom btn-sm-custom hover-lift btn-view"
+                                            data-bs-toggle="modal" data-bs-target="#clienteModal"
+                                            data-cliente-id="{{ cliente.id }}"
+                                            title="Ver detalhes">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <a href="{{ url_for('editar', id=cliente.id) }}" 
+                                       class="btn btn-warning-custom btn-custom btn-sm-custom hover-lift"
+                                       title="Editar cliente">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" 
+                                            class="btn btn-danger-custom btn-custom btn-sm-custom hover-lift btn-delete"
+                                            data-cliente-id="{{ cliente.id }}"
+                                            data-cliente-nome="{{ cliente.nome }}"
+                                            title="Excluir cliente">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3 text-end">
+        <small class="text-muted">
+            <i class="bi bi-info-circle"></i> Total de {{ clientes|length }} cliente(s) cadastrado(s)
+        </small>
+    </div>
+    {% else %}
+    <!-- Estado vazio -->
+    <div class="card card-custom glass-effect text-center">
+        <div class="card-body py-5">
+            <i class="bi bi-people display-1 text-muted"></i>
+            <h3 class="text-muted mt-3">Nenhum cliente cadastrado</h3>
+            <p class="text-muted">Comece cadastrando o primeiro cliente no sistema.</p>
+            <a href="{{ url_for('adicionar') }}" class="btn btn-primary-custom btn-custom mt-3">
+                <i class="bi bi-person-plus"></i> Cadastrar Primeiro Cliente
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para Visualizar Detalhes -->
+<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="clienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content modal-custom">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark-strong" id="clienteModalLabel">
+                    <i class="bi bi-person-badge"></i> Detalhes do Cliente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="clienteDetails">
+                <!-- Detalhes serão carregados via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary-custom btn-custom" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Máscara para CPF
+    document.querySelectorAll('.cpf-mask').forEach(function(element) {
+        let cpf = element.textContent;
+        if (cpf.length === 11) {
+            element.textContent = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        }
+    });
+
+    // Busca em tempo real
+    const searchInput = document.getElementById('searchInput');
+    const filterCity = document.getElementById('filterCity');
+    const filterState = document.getElementById('filterState');
+    const rows = document.querySelectorAll('.cliente-row');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const cityFilter = filterCity.value;
+        const stateFilter = filterState.value;
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const city = row.cells[7].textContent.split('/')[0].trim();
+            const state = row.cells[7].textContent.split('/')[1].trim();
+
+            const matchesSearch = text.includes(searchTerm);
+            const matchesCity = !cityFilter || city === cityFilter;
+            const matchesState = !stateFilter || state === stateFilter;
+
+            row.style.display = (matchesSearch && matchesCity && matchesState) ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    filterCity.addEventListener('change', filterTable);
+    filterState.addEventListener('change', filterTable);
+
+    // Modal de detalhes
+    const viewButtons = document.querySelectorAll('.btn-view');
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const clienteId = this.getAttribute('data-cliente-id');
+            // Aqui você pode fazer uma requisição AJAX para buscar detalhes completos
+            // ou usar dados já carregados na página
+            document.getElementById('clienteDetails').innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary-custom" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <p class="mt-2">Carregando detalhes...</p>
+                </div>
+            `;
+        });
+    });
+
+    // Confirmação de exclusão
+    const deleteButtons = document.querySelectorAll('.btn-delete');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const clienteNome = this.getAttribute('data-cliente-nome');
+            const clienteId = this.getAttribute('data-cliente-id');
+            
+            if (confirm(`Tem certeza que deseja excluir o cliente "${clienteNome}"?`)) {
+                window.location.href = "{{ url_for('excluir', id=0) }}".replace('0', clienteId);
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.stat-card {
+    transition: transform 0.2s;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+.cpf-mask {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+}
+</style>
+{% endblock %}
